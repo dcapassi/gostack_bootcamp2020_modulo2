@@ -13,29 +13,28 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      email:{
-        type:Sequelize:STRING,
-        allowNull:false,
-        unique:true
+      email: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
       },
-      password_hash:{
-        type:Sequelize.STRING,
-        allowNull:false,
+      password_hash: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
-      provider:{
-        defaultValue:false,
-        allowNull:false,
-        type:Sequelize.BOOLEAN,
+      provider: {
+        defaultValue: false,
+        allowNull: false,
+        type: Sequelize.BOOLEAN
       },
-      created_at:{
+      created_at: {
         type: Sequelize.DATE,
-        allowNull:false
+        allowNull: false
       },
-      updated_at:{
+      updated_at: {
         type: Sequelize.DATE,
-        allowNull:false
+        allowNull: false
       }
-
     });
   },
 

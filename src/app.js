@@ -5,8 +5,8 @@ import "./database";
 class App {
   constructor() {
     this.server = express();
-    this.routes();
     this.middlwares();
+    this.routes();
   }
   middlwares() {
     this.server.use(express.json());

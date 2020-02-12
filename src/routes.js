@@ -6,6 +6,7 @@ import SessionController from "./app/controllers/SessionController";
 import AppointmentController from "./app/controllers/AppointmentController";
 import FileController from "./app/controllers/FileController";
 import ScheduleController from "./app/controllers/ScheduleController";
+import NotificationController from "./app/controllers/NotificationController";
 
 import multer from "multer";
 import multerConfig from "./configs/multer";
@@ -28,5 +29,5 @@ routes.post("/appointments", authMiddlware, AppointmentController.store);
 routes.get("/appointments", authMiddlware, AppointmentController.index);
 routes.get("/schedule", authMiddlware, ScheduleController.index);
 routes.get("/providers", authMiddlware, ProviderController.index);
-
+routes.get("/notifications", authMiddlware, NotificationController.index);
 export default routes;

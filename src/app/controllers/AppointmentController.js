@@ -66,6 +66,9 @@ class AppointmentController {
         date: hourStart
       }
     });
+
+    console.log(checkAvailability);
+
     if (checkAvailability) {
       return res
         .status(400)
@@ -74,7 +77,7 @@ class AppointmentController {
 
     const apointment = await Appointment.create({
       user_id,
-      date,
+      date: hourStart,
       provider_id
     });
 

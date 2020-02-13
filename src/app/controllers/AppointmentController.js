@@ -6,6 +6,7 @@ import pt from "date-fns/locale/pt";
 import User from "../models/User";
 import File from "../models/File";
 import { Op } from "sequelize";
+import Mail from "../../lib/Mail";
 
 class AppointmentController {
   async index(req, res) {
@@ -95,11 +96,26 @@ class AppointmentController {
   }
 
   async delete(req, res) {
-    const appointment = await Appointment.findByPk(req.params.id);
+    const appointment = await Appointment.findByPk(req.params.id, {
+      include: [
+        {
+          model: User,
+          as: "provider",
+          attributes: ["name", "email"]
+        }
+      ]
+    });
 
     if (!appointment) {
-      res.status(401).json({ error: "Appointment id does not exist." });
+      return res.status(401).json({ error: "Appointment id does not exist." });
     }
+
+    if (appointment.user_id != req.userId) {
+      return res
+        .status(401)
+        .json({ error: "This users does not have this appointment" });
+    }
+
     const alreadyCanceled = await Appointment.findOne({
       where: {
         id: req.params.id,
@@ -112,11 +128,17 @@ class AppointmentController {
     console.log(alreadyCanceled);
 
     if (alreadyCanceled) {
-      res.status(401).json({ error: "Appointment already canceled" });
+      return res.status(401).json({ error: "Appointment already canceled" });
     }
 
     appointment.canceled_at = new Date();
     await appointment.save();
+
+    await Mail.sendMail({
+      to: `${appointment.provider.name} <${appointment.provider.email}>`,
+      subject: "Angendamento cancelado",
+      text: "Você tem um novo cancelamento"
+    });
 
     return res.json(appointment);
   }

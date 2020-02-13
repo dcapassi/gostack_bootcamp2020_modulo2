@@ -15,11 +15,26 @@ class NotificationController {
     const notifications = await Notification.find({
       user: req.userId
     })
-      .sort("createdAt")
+      .sort({ createdAt: "desc" })
       .limit(10);
 
     return res.json(notifications);
   }
+
+  async update(req, res) {
+    const notification = await Notification.findByIdAndUpdate(
+      req.params.id,
+      { read: true },
+      { new: true }
+    );
+    return res.json(notification);
+  }
+
+async deleteAll(req, res) {
+    const removeAll = await Notification.collection.drop()
+    return res.json(removeAll);
+  }
 }
+
 
 export default new NotificationController();

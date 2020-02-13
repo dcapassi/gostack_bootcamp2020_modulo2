@@ -5,6 +5,7 @@ import { startOfHour, parseISO, isBefore, format } from "date-fns";
 import pt from "date-fns/locale/pt";
 import User from "../models/User";
 import File from "../models/File";
+import { Op } from "sequelize";
 
 class AppointmentController {
   async index(req, res) {
@@ -12,7 +13,7 @@ class AppointmentController {
     const userId = req.userId;
     const appointments = await Appointment.findAll({
       where: { user_id: userId, canceled_at: null },
-      attributes: ["id", "date"],
+      attributes: ["id", "date", "canceled_at"],
       order: ["date"],
       limit: 20,
       offset: (page - 1) * 20,
@@ -91,6 +92,33 @@ class AppointmentController {
     });
 
     return res.json(apointment);
+  }
+
+  async delete(req, res) {
+    const appointment = await Appointment.findByPk(req.params.id);
+
+    if (!appointment) {
+      res.status(401).json({ error: "Appointment id does not exist." });
+    }
+    const alreadyCanceled = await Appointment.findOne({
+      where: {
+        id: req.params.id,
+        canceled_at: {
+          [Op.not]: null
+        }
+      }
+    });
+
+    console.log(alreadyCanceled);
+
+    if (alreadyCanceled) {
+      res.status(401).json({ error: "Appointment already canceled" });
+    }
+
+    appointment.canceled_at = new Date();
+    await appointment.save();
+
+    return res.json(appointment);
   }
 }
 export default new AppointmentController();

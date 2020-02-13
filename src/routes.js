@@ -27,7 +27,12 @@ routes.post(
 );
 routes.post("/appointments", authMiddlware, AppointmentController.store);
 routes.get("/appointments", authMiddlware, AppointmentController.index);
+routes.delete("/appointments/:id", authMiddlware, AppointmentController.delete);
 routes.get("/schedule", authMiddlware, ScheduleController.index);
 routes.get("/providers", authMiddlware, ProviderController.index);
 routes.get("/notifications", authMiddlware, NotificationController.index);
+routes.put("/notifications/:id", authMiddlware, NotificationController.update);
+routes.delete("/notifications/delete/", authMiddlware, NotificationController.deleteAll);
+
+
 export default routes;

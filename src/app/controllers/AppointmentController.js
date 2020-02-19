@@ -97,16 +97,17 @@ class AppointmentController {
 
   async delete(req, res) {
     const appointment = await Appointment.findByPk(req.params.id, {
+      attributes: ["id"],
       include: [
         {
           model: User,
-          as: "provider",
-          attributes: ["name", "email"],
+          as: "user",
+          attributes: ["name"],
           include: [
             {
               model: User,
-              as: "user",
-              attributes: ["name"]
+              as: "provider",
+              attributes: ["name", "email"]
             }
           ]
         }
@@ -137,6 +138,8 @@ class AppointmentController {
     if (alreadyCanceled) {
       return res.status(401).json({ error: "Appointment already canceled" });
     }
+
+    return res.json({ appointment });
 
     appointment.canceled_at = new Date();
     await appointment.save();

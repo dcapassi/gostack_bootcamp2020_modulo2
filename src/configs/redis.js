@@ -1,0 +1,4 @@
+export default{
+    host: '192.168.56.1',
+    port: 6379
+}

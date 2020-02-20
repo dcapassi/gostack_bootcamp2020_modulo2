@@ -6,7 +6,8 @@ import pt from "date-fns/locale/pt";
 import User from "../models/User";
 import File from "../models/File";
 import { Op } from "sequelize";
-import Mail from "../../lib/Mail";
+import Queue from "../../lib/Queue";
+import CancellationMail from "../jobs/CancellationMail";
 
 class AppointmentController {
   async index(req, res) {
@@ -97,19 +98,16 @@ class AppointmentController {
 
   async delete(req, res) {
     const appointment = await Appointment.findByPk(req.params.id, {
-      attributes: ["id"],
       include: [
         {
           model: User,
+          as: "provider",
+          attributes: ["name", "email"]
+        },
+        {
+          model: User,
           as: "user",
-          attributes: ["name"],
-          include: [
-            {
-              model: User,
-              as: "provider",
-              attributes: ["name", "email"]
-            }
-          ]
+          attributes: ["name"]
         }
       ]
     });
@@ -139,20 +137,11 @@ class AppointmentController {
       return res.status(401).json({ error: "Appointment already canceled" });
     }
 
-    return res.json({ appointment });
-
     appointment.canceled_at = new Date();
     await appointment.save();
 
-    await Mail.sendMail({
-      to: `${appointment.provider.name} <${appointment.provider.email}>`,
-      subject: "Angendamento cancelado",
-      template: "cancelation",
-      context: {
-        provider: appointment.provider.name,
-        user: appointment.user.name,
-        date: appointment.date
-      }
+    await Queue.add(CancellationMail.key, {
+      appointment
     });
 
     return res.json(appointment);

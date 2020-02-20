@@ -70,7 +70,6 @@ class AppointmentController {
       }
     });
 
-    console.log(checkAvailability);
 
     if (checkAvailability) {
       return res
@@ -130,8 +129,6 @@ class AppointmentController {
         }
       }
     });
-
-    console.log(alreadyCanceled);
 
     if (alreadyCanceled) {
       return res.status(401).json({ error: "Appointment already canceled" });

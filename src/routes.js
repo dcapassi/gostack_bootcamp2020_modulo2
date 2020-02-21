@@ -7,6 +7,7 @@ import AppointmentController from "./app/controllers/AppointmentController";
 import FileController from "./app/controllers/FileController";
 import ScheduleController from "./app/controllers/ScheduleController";
 import NotificationController from "./app/controllers/NotificationController";
+import AvailableController from "./app/controllers/AvailableController";
 
 import multer from "multer";
 import multerConfig from "./configs/multer";
@@ -30,9 +31,17 @@ routes.get("/appointments", authMiddlware, AppointmentController.index);
 routes.delete("/appointments/:id", authMiddlware, AppointmentController.delete);
 routes.get("/schedule", authMiddlware, ScheduleController.index);
 routes.get("/providers", authMiddlware, ProviderController.index);
+routes.get(
+  "/providers/:id/available",
+  authMiddlware,
+  AvailableController.index
+);
 routes.get("/notifications", authMiddlware, NotificationController.index);
 routes.put("/notifications/:id", authMiddlware, NotificationController.update);
-routes.delete("/notifications/delete/", authMiddlware, NotificationController.deleteAll);
-
+routes.delete(
+  "/notifications/delete/",
+  authMiddlware,
+  NotificationController.deleteAll
+);
 
 export default routes;
